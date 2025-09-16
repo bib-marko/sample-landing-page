@@ -16,7 +16,17 @@
     <div class="col-2">
         <img src="/img/logo.png" class="logo" />
         <div class="video-wrapper">
-            <video ref="videoRef" autoplay muted loop>
+            <video 
+                ref="videoRef"
+                autoplay 
+                muted 
+                loop 
+                playsinline
+                webkit-playsinline
+                controlslist="nodownload nofullscreen noremoteplayback" 
+                disablepictureinpicture 
+                class="no-controls"
+                >
                 <source src="/video/video.mp4" type="video/mp4" />
             </video>
             <div class="controls">
@@ -222,6 +232,16 @@ a:hover {
 
 .control-btn:hover {
   transform: scale(1.1);
+}
+
+
+.no-controls::-webkit-media-controls {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+.no-controls::-webkit-media-controls-enclosure {
+  display: none !important;
 }
 
 @keyframes marquee {
