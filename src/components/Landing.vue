@@ -132,14 +132,22 @@ const toggleMute = () => {
 .play-btn {
     cursor: pointer;
     max-width: 350px;
+    margin-top: 1rem;
     animation: bounce 2s infinite;
 }
+
+.play-btn {
+    cursor: pointer;
+    width: 70vmin;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, .9));
+}
+
 
 .video-wrapper {
   position: relative;
   aspect-ratio: 16/9;
-  border: 2px solid white;
-  border-radius: 16px;
+  border: 7px solid white;
+  border-radius: 30px;
   overflow: hidden;
   max-width: 80%;
 }
@@ -167,7 +175,6 @@ a,
 a:hover {
     text-decoration: underline;
 }
-
 
 .video-wrapper {
   position: relative;
@@ -202,7 +209,6 @@ a:hover {
   transform: scale(1.1);
 }
 
-
 .no-controls::-webkit-media-controls {
   display: none !important;
   -webkit-appearance: none;
@@ -232,12 +238,20 @@ a:hover {
         justify-items: center;
     }
 
+    .details-desktop-img {
+        width: 100%;
+        max-width: 840px;
+        height: auto;
+    }
+
     
     .col-1 {
         order: 1;
+        margin-left: 5rem;
     }
     .col-2 {
         order: 2;
+        margin-right: 5rem;
     }
 
     .logo {
@@ -246,20 +260,23 @@ a:hover {
 
     .play-btn {
         cursor: pointer;
-        width: 80vmin;
-        margin-top: -50px;
+        max-width: 540px;
+        height: auto;
+        margin-top: 3rem;
     }
 
-    .marquee {
-          width: 75%;
-        margin-top: -30px;
+    .desc {
+        width: 100%;
+        max-width: 740px;
+        height: auto;
     }
+
     a,
     .desc {
         font-family: 'Lilita One', sans-serif;
         color: white;
         text-align: center;
-        font-size: 4vmin;
+        font-size: 3.5vmin;
         line-height: 1.2;   
         padding: 0.5em 0;  
         width: 680px;
@@ -274,6 +291,16 @@ a:hover {
     .desc p {
         margin: 0 !important;
         padding: 0 !important;
+    }
+
+    .video-wrapper {
+      position: relative;
+      aspect-ratio: 16/9;
+      border: 7px solid white;
+      border-radius: 30px;
+      overflow: hidden;
+      max-width: 80%;
+      margin-top: -2rem;
     }
     
 
