@@ -1,79 +1,71 @@
 <template>
-  <div class="desktop-temp">
-    <div class="col-1">
-      <img v-if="!IS_PORTRAIT" src="/img/details-desktop.png" class="details-desktop-img" />
-      <img v-else src="/img/details-mobile.png" class="details-desktop-img" />
+    <div class="desktop-temp">
+        <div class="col-1">
+            <img v-if="IS_DESKTOP" src="/img/details-desktop.png" class="details-desktop-img" />
+            <img v-else src="/img/details-mobile.png" class="details-desktop-img" />
 
-      <div v-if="IS_PORTRAIT" class="desc">
-        <p>
-          MAGLARO AT MANALO NG BONGGANG PAPREMYO, DITO LANG SA
-          <a href="MEGABET-PARADISE.COM">MEGABET-PARADISE.COM</a>
-        </p>
-      </div>
-      <img v-if="IS_PORTRAIT" src="/img/play-btn.png" class="play-btn" />
-    </div>
+            <div v-if="!IS_DESKTOP" class="desc">
+                <p>
+                MAGLARO AT MANALO NG BONGGANG PAPREMYO, DITO LANG SA
+                <a href="https://megabet-paradise.com" target="_blank" rel="noopener noreferrer">MEGABET-PARADISE.COM</a>
+                </p>
+            </div>
+            <img  @click="goToSite" v-if="!IS_DESKTOP" src="/img/play-btn.png" class="play-btn" />
+        </div>
 
     <div class="col-2">
-      <img src="/img/logo.png" class="logo" />
-      <div class="marquee">
-        <div class="track">
-          <span>{{ repeatedText }}</span>
-          <span>{{ repeatedText }}</span>
+        <img src="/img/logo.png" class="logo" />
+        <div class="video-wrapper">
+            <video ref="videoRef" autoplay muted loop>
+                <source src="/video/video.mp4" type="video/mp4" />
+            </video>
+            <div class="controls">
+                <img
+                v-if="isMuted"
+                src="/img/muted.png"
+                class="control-btn"
+                @click="toggleMute"
+                />
+                <img
+                v-else
+                src="/img/play.png"
+                class="control-btn"
+                @click="toggleMute"
+                />
+            </div>
         </div>
-      </div>
-
-      <div class="video-wrapper">
-        <img src="/img/sample-video.gif" />
-      </div>
-
-      <div v-if="!IS_PORTRAIT" class="desc">
-        <p>
-          MAGLARO AT MANALO NG BONGGANG PAPREMYO, DITO LANG SA
-          <a href="MEGABET-PARADISE.COM">MEGABET-PARADISE.COM</a>
-        </p>
-      </div>
-      <img v-if="!IS_PORTRAIT" src="/img/play-btn.png" class="play-btn" />
+        <div v-if="IS_DESKTOP" class="desc">
+            <p>
+            MAGLARO AT MANALO NG BONGGANG PAPREMYO, DITO LANG SA
+            </p>   <a href="https://megabet-paradise.com" target="_blank" rel="noopener noreferrer">MEGABET-PARADISE.COM</a>
+        </div>
+        <img  @click="goToSite" v-if="IS_DESKTOP" src="/img/play-btn.png" class="play-btn" />
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { computed } from "vue";
+import { ref } from "vue";
 import { useOrientation } from "../service/orientation";
 
+const videoRef = ref<HTMLVideoElement | null>(null);
+const isMuted = ref(true); // start muted
+
 const ORIENTATION_UTILS = useOrientation();
-const IS_PORTRAIT = ORIENTATION_UTILS.IS_PORTRAIT;
+const IS_DESKTOP = ORIENTATION_UTILS.IS_DESKTOP;
 
-const repeatedText = computed(() => {
-  return Array(6)
-    .fill(
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-    )
-    .join(" • ");
-});
+const goToSite = () => {
+  window.open("https://megabet-paradise.com", "_blank");
+};
 
-// 🎶 Play background music on page load
-onMounted(() => {
-  const audio = new Audio("/music/music.mp3");
-  audio.loop = true;
-  audio.volume = 0.5; // adjust as needed
+const toggleMute = () => {
+  if (videoRef.value) {
+    videoRef.value.muted = !videoRef.value.muted;
+    isMuted.value = videoRef.value.muted;
+  }
+};
 
-  // Try to play immediately
-  audio.play().catch(() => {
-    // If autoplay is blocked, wait for first user interaction
-    const resume = () => {
-      audio.play();
-      document.removeEventListener("click", resume);
-      document.removeEventListener("touchstart", resume);
-    };
-    document.addEventListener("click", resume);
-    document.addEventListener("touchstart", resume);
-  });
-});
 </script>
-
-
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
@@ -88,7 +80,6 @@ onMounted(() => {
   background-size: cover;
 }
 
-/* 📱 MOBILE FIRST */
 .desktop-temp {
   display: flex;
   flex-direction: column;
@@ -99,7 +90,6 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
-/* Children stacked */
 .col-1,
 .col-2 {
   display: flex;
@@ -108,20 +98,21 @@ onMounted(() => {
   width: 100%;
 }
 
-/* ✅ Reverse order on mobile */
 .col-2 {
-  order: 1; /* top */
+  order: 1;
 }
 .col-1 {
-  order: 2; /* bottom */
+  order: 2;
 }
-
-/* Responsive elements */
 
 .details-desktop-img {
   width: 100%;
   max-width: 920px;
   height: auto;
+}
+
+.desc {
+  margin-top: 10px;
 }
 
 .logo,
@@ -139,8 +130,9 @@ onMounted(() => {
 }
 
 .play-btn {
-  max-width: 250vmin;
-  animation: bounce 2s infinite;
+    cursor: pointer;
+    max-width: 250vmin;
+    animation: bounce 2s infinite;
 }
 
 .video-wrapper {
@@ -151,7 +143,7 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.video-wrapper img {
+.video-wrapper video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -199,6 +191,39 @@ a:hover {
 }
 
 
+.video-wrapper {
+  position: relative;
+  aspect-ratio: 16/9;
+  border: 2px solid white;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.control-btn {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.control-btn:hover {
+  transform: scale(1.1);
+}
+
 @keyframes marquee {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -231,6 +256,7 @@ a:hover {
     }
 
     .play-btn {
+        cursor: pointer;
         width: 80vmin;
         margin-top: -50px;
     }
@@ -248,7 +274,7 @@ a:hover {
         line-height: 1.2;   
         padding: 0.5em 0;  
         width: 680px;
-        margin-top: -20px;
+
         text-decoration: none;
     }
 
