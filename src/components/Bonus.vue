@@ -1,8 +1,12 @@
 <template>
-    <div class="desktop-temp">
+    <div class="desktop-temp"  :style="{
+      background: IS_DESKTOP
+        ? 'url(/img/bg-desktop.png) no-repeat center center fixed'
+        : 'url(/img/bg-mobile.png) no-repeat center center fixed',
+      'background-size': 'cover'
+    }">
         <div class="col-1">
-            <img v-if="IS_DESKTOP" src="/img/details-desktop.png" class="details-desktop-img" />
-            <img v-else src="/img/details-mobile.png" class="details-desktop-img" />
+            <img src="/img/bonus/bonus-banner.png" class="details-desktop-img" />
 
             <div v-if="!IS_DESKTOP" class="desc">
                 <p>
@@ -10,11 +14,12 @@
                 <a href="https://megabet-paradise.com" target="_blank" rel="noopener noreferrer">MEGABET-PARADISE.COM</a>
                 </p>
             </div>
-            <img  @click="goToSite" v-if="!IS_DESKTOP" src="/img/play-btn.png" class="play-btn" />
+            <img  @click="goToSite" v-if="!IS_DESKTOP" src="/img/bonus/mobile-btn.png" class="play-btn" />
         </div>
 
     <div class="col-2">
-        <img src="/img/logo.png" class="logo" />
+        <img v-if="IS_DESKTOP" src="/img/bonus/title.png" class="logo" />
+        <img v-else src="/img/logo.png" class="logo" />
         <div class="video-wrapper">
             <video 
                 ref="videoRef"
@@ -44,12 +49,15 @@
                 />
             </div>
         </div>
+
+        <img v-if="!IS_DESKTOP" src="/img/bonus/title.png" class="logo" />
+
         <div v-if="IS_DESKTOP" class="desc">
             <p>
             MAGLARO AT MANALO NG BONGGANG PAPREMYO, DITO LANG SA
             </p>   <a href="https://megabet-paradise.com" target="_blank" rel="noopener noreferrer">MEGABET-PARADISE.COM</a>
         </div>
-        <img  @click="goToSite" v-if="IS_DESKTOP" src="/img/play-btn.png" class="play-btn" />
+        <img  @click="goToSite" v-if="IS_DESKTOP" src="/img/bonus/desktop-btn.png" class="play-btn" />
         </div>
     </div>
 </template>
@@ -80,6 +88,30 @@ const toggleMute = () => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
 
+/* :global(html, body) {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background: url("/img/bg-desktop.png") no-repeat center center fixed;
+  background-size: cover;
+} */
+
+/* 
+.bg-desktop {
+  background: url("/img/bg-desktop.png") no-repeat center center fixed;
+  background-size: cover;
+}
+
+.bg-mobile {
+    margin: -.7rem;
+    padding: 1rem;
+    border: 2px solid red;
+    background: url("/img/bg-mobile.png") no-repeat center center fixed;
+    background-size: cover;
+} */
+
 .desktop-temp {
   display: flex;
   flex-direction: column;
@@ -106,13 +138,15 @@ const toggleMute = () => {
 }
 
 .details-desktop-img {
+    margin-top: -2rem;
     width: 100%;
-    max-width: 320px;
+    max-width: 750px;
     height: auto;
 }
 
 .desc {
   margin-top: 10px;
+  margin-bottom: 2em;
 }
 
 .logo,
@@ -126,12 +160,22 @@ const toggleMute = () => {
 }
 
 .logo {
-    max-width: 40%;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    max-width: 90%;
 }
 
 .play-btn {
+  width: 100%;
+  max-width: 370px;
+  height: auto;
+  margin-bottom: 3rem;
+}
+
+
+.play-btn {
     cursor: pointer;
-    max-width: 350px;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, .9));
     animation: bounce 2s infinite;
 }
 
@@ -141,13 +185,35 @@ const toggleMute = () => {
   border: 2px solid white;
   border-radius: 16px;
   overflow: hidden;
-  max-width: 80%;
 }
 
 .video-wrapper video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.marquee {
+margin-bottom: 10px;
+  width: 95%;
+  overflow: hidden;
+  background: #000000;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.51) 100%, rgba(0, 0, 0, 1) 100%);
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: clamp(12px, 3.5vmin, 10px);
+  padding: 0.5em;
+  white-space: nowrap;
+  border-radius: 16px;
+  border: 2px solid white;
+}
+
+.track {
+  display: inline-flex;
+  animation: marquee 400s linear infinite;
+}
+.track span {
+  padding-right: 2rem;
 }
 
 a,
@@ -232,28 +298,45 @@ a:hover {
         justify-items: center;
     }
 
-    
     .col-1 {
-        order: 1;
+        
+        order: 2;
+        
     }
     .col-2 {
-        order: 2;
+        padding-top: 2em;
+        /* padding-top: 2em;
+        padding-bottom: 2em; */
+        order: 1;
     }
 
     .logo {
-        max-width: 50%;
+          margin-top: -2rem;
+    margin-bottom: 0;
+        max-width: 80%;
+    }
+
+    .play-btn {
+        width: 100%;
+        max-width: 540px;
+        height: auto;
+        margin-bottom: 0;
     }
 
     .play-btn {
         cursor: pointer;
-        width: 80vmin;
-        margin-top: -50px;
+        width: 70vmin;
+        filter: drop-shadow(0 0 20px rgba(255, 255, 255, .9));
     }
 
-    .marquee {
-          width: 75%;
-        margin-top: -30px;
+
+    .desc {
+        width: 100%;
+        max-width: 740px;
+        height: auto;
     }
+
+
     a,
     .desc {
         font-family: 'Lilita One', sans-serif;
@@ -263,7 +346,6 @@ a:hover {
         line-height: 1.2;   
         padding: 0.5em 0;  
         width: 680px;
-
         text-decoration: none;
     }
 
@@ -276,7 +358,98 @@ a:hover {
         padding: 0 !important;
     }
     
+     .video-wrapper {
+        margin-top: 1em;
+        width: 700px;  
+        max-width: 95%; 
+    }
 
+
+}
+
+
+@media (max-width: 1440px) and (orientation: landscape) { 
+ .col-1 {
+        margin-top: 4rem;
+        
+    }
+     .col-2 {
+        margin-top: 4rem;
+        
+    }
+}
+
+
+/* Landscape fold mode */
+@media screen and (max-width: 850px) and (orientation: landscape) {
+ .desktop-temp {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        justify-items: center;
+    }
+
+    .col-1 {
+        order: 2;
+    }
+    .col-2 {
+        padding-top: 2em;
+        order: 1;
+    }
+
+    .logo {
+          margin-top: -2rem;
+    margin-bottom: 0;
+        max-width: 80%;
+    }
+
+    .play-btn {
+        width: 100%;
+        max-width: 540px;
+        height: auto;
+        margin-bottom: 0;
+    }
+
+    .play-btn {
+        cursor: pointer;
+        width: 70vmin;
+        filter: drop-shadow(0 0 20px rgba(255, 255, 255, .9));
+    }
+
+
+    .desc {
+        width: 100%;
+        max-width: 740px;
+        height: auto;
+    }
+
+
+    a,
+    .desc {
+        font-family: 'Lilita One', sans-serif;
+        color: white;
+        text-align: center;
+        font-size: 4vmin;
+        line-height: 1.2;   
+        padding: 0.5em 0;  
+        width: 680px;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .desc p {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .video-wrapper {
+        margin-top: 1em;
+        width: 700px;  
+        max-width: 95%; 
+    }
 }
 
 </style>
