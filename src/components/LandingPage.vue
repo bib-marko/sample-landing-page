@@ -1,29 +1,29 @@
 <template>
   <section ref="root" class="animation">
-    <img id="logo" class="logo" src="/public/img/logo.png" alt="logo" />
-    <img id="boy1" class="boy-1" src="/public/img/boy1.png" alt="boy" />
-    <img id="girl1" class="girl-1" src="/public/img/girl1.png" alt="girl" />
+    <img id="logo" class="logo" src="/img/logo.png" alt="logo" />
+    <img id="boy1" class="boy-1" src="/img/boy1.png" alt="boy" />
+    <img id="girl1" class="girl-1" src="/img/girl1.png" alt="girl" />
 
-    <img id="desc1" class="desc-1" src="/public/img/desc-1.png" alt="desc1" />
-    <img id="desc2" class="desc-2" src="/public/img/desc-2.png" alt="desc2" />
+    <img id="desc1" class="desc-1" src="/img/desc-1.png" alt="desc1" />
+    <img id="desc2" class="desc-2" src="/img/desc-2.png" alt="desc2" />
     <img
       id="playBtn"
       class="play-btn"
-      src="/public/img/play-btn.png"
+      src="/img/play-btn.png"
       alt="play"
     />
 
     <img
       id="title2"
       class="title2"
-      src="/public/img/title-2.png"
+      src="/img/title-2.png"
       alt="title2"
     />
-    <img id="cert" class="cert" src="/public/img/cert.png" alt="cert" />
+    <img id="cert" class="cert" src="/img/cert.png" alt="cert" />
     <img
       id="licensing"
       class="licensing"
-      src="/public/img/licensing.png"
+      src="/img/licensing.png"
       alt="licensing"
     />
   </section>
@@ -137,13 +137,14 @@ onMounted(() => {
   ScrollTrigger.create({
     animation: master,
     trigger: container,
-    scrub: 1,
+    scrub: 3,
     pin: true,
   });
 });
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
 :global(html, body) {
   margin: 0;
   padding: 0;
