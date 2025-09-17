@@ -6,9 +6,8 @@
 
             <div v-if="!IS_DESKTOP" class="desc">
                 <p>
-                MAGLARO AT MANALO NG BONGGANG PAPREMYO, DITO LANG SA
-                <a href="https://megabet-paradise.com" target="_blank" rel="noopener noreferrer">MEGABET-PARADISE.COM</a>
-                </p>
+                LEGIT AT SAFE PANALO KA DITO SA
+                </p><a href="https://megabet-paradise.com" target="_blank" rel="noopener noreferrer">MEGABET-PARADISE.COM</a>
             </div>
             <img  @click="goToSite" v-if="!IS_DESKTOP" src="/img/play-btn.png" class="play-btn" />
         </div>
@@ -46,7 +45,7 @@
         </div>
         <div v-if="IS_DESKTOP" class="desc">
             <p>
-            MAGLARO AT MANALO NG BONGGANG PAPREMYO, DITO LANG SA
+            LEGIT AT SAFE PANALO KA DITO SA
             </p>   <a href="https://megabet-paradise.com" target="_blank" rel="noopener noreferrer">MEGABET-PARADISE.COM</a>
         </div>
         <img  @click="goToSite" v-if="IS_DESKTOP" src="/img/play-btn.png" class="play-btn" />
