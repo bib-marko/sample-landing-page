@@ -162,8 +162,8 @@ a,
   font-family: 'Lilita One', sans-serif;
   color: white;
   text-align: center;
-  font-size: clamp(14px, 4vmin, 22px);
-  line-height: 1.2;
+  font-size: clamp(14px, 5vmin, 22px);
+  line-height: .9;
 }
 
 .desc p {
@@ -275,8 +275,8 @@ a:hover {
         font-family: 'Lilita One', sans-serif;
         color: white;
         text-align: center;
-        font-size: 3.5vmin;
-        line-height: 1.2;   
+        font-size: 4.5vmin;
+        line-height: .9;   
         padding: 0.5em 0;  
         width: 680px;
 
