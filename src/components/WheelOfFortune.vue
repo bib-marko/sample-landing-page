@@ -163,7 +163,6 @@ function findWinner() {
     <div>The result is:</div>
     <div class="result-content">
       <img src="${winner.imageUrl}" width="50" height="50" />
-      <span>${winner.msg}</span>
     </div>
   `
   setTimeout(() => {
