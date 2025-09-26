@@ -3,9 +3,11 @@
     <h1 class="title">Wheel of Fortune</h1>
 
     <div class="wheel-container">
-      <canvas ref="wheelCanvas" width="500" height="500"></canvas>
-      <img src="/img/button.png" class="spin-btn" @click="spinWheel" />
-      <img src="/img/diamondRoulette/pointer.webp" class="arrow-pointer"  />
+     <div class="canvas-wrapper">
+    <canvas ref="wheelCanvas"></canvas>
+  </div>
+  <img src="/img/button.png" class="spin-btn" @click="spinWheel" />
+  <img src="/img/diamondRoulette/arrow.png" class="arrow-pointer" />
     </div>
 
     <div id="result" :class="{ show: showResult }" v-html="resultHtml"></div>
@@ -14,6 +16,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
+import confetti from "canvas-confetti"
 
 const wheelCanvas = ref<HTMLCanvasElement | null>(null)
 const ctx = ref<CanvasRenderingContext2D | null>(null)
@@ -101,7 +104,7 @@ segments.value.forEach((seg, i) => {
     c.save()
     c.translate(imgX, imgY)
     c.rotate(midAngle + Math.PI / 2)  // rotate with slice
-    c.drawImage(img, -30, -30, 60, 60)
+    c.drawImage(img, -30, -45, 60, 60)
     c.restore()
   }
 })
@@ -167,34 +170,131 @@ function findWinner() {
   `
   setTimeout(() => {
     showResult.value = true
+    launchFireworks()
+    // launchSchoolPride()
   }, 300)
 }
+
+function launchFireworks() {
+  const duration = 15 * 1000
+  const animationEnd = Date.now() + duration
+  const defaults = { 
+    startVelocity: 30, 
+    spread: 360, 
+    ticks: 60, 
+    zIndex: 9999,
+    scalar: 1 // 🌟 make confetti much bigger
+  }
+
+  function randomInRange(min: number, max: number) {
+    return Math.random() * (max - min) + min
+  }
+
+  const interval: ReturnType<typeof setInterval> = setInterval(() => {
+    const timeLeft = animationEnd - Date.now()
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval)
+    }
+
+    const particleCount = 100 * (timeLeft / duration)
+    // since particles fall down, start them high
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }
+    })
+  }, 250)
+}
+
+// function launchSchoolPride() {
+//   const colors = ["#bb0000", "#ffffff"] // 🎨 school colors
+
+//   ;(function frame() {
+//     confetti({
+//       particleCount: 4,
+//       angle: 60,
+//       spread: 55,
+//       origin: { x: 0 }, // left side
+//       colors,
+//       scalar: 1, // bigger confetti
+//     })
+
+//     confetti({
+//       particleCount: 4,
+//       angle: 120,
+//       spread: 55,
+//       origin: { x: 1 }, // right side
+//       colors,
+//       scalar: 1,
+//     })
+
+//     requestAnimationFrame(frame) // ♾️ loop forever
+//   })()
+// }
+
 
 onMounted(async () => {
   if (wheelCanvas.value) {
     ctx.value = wheelCanvas.value.getContext("2d")
+
+    function resizeCanvas() {
+      if (!wheelCanvas.value) return
+      const parent = wheelCanvas.value.parentElement
+      if (!parent) return
+
+      // match container size
+      const size = parent.clientWidth
+      wheelCanvas.value.width = size
+      wheelCanvas.value.height = size
+      drawWheel()
+    }
+
+    window.addEventListener("resize", resizeCanvas)
     await preloadImages()
-    drawWheel()
+    resizeCanvas() // initial sizing
   }
 })
+
 </script>
 
 <style scoped>
+/* ✅ Base (mobile-first) */
 .main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
+  padding: 1rem;
 }
+
 .wheel-container {
   position: relative;
-  width: 500px;
-  height: 500px;
-  transform: rotate(270deg);
-padding: 37px;
-  /* 🔥 Add background */
+  width: 100%;
+  max-width: 360px;   /* mobile default */
+  aspect-ratio: 1/1;  /* keeps it square */
+  margin: 0 auto;
   background: url("/img/wheel.png") no-repeat center center;
-  background-size: cover; /* scale image to fit */
+  background-size: cover;
+  border-radius: 50%;
+  transform: rotate(270deg);
+
+}
+
+.canvas-wrapper {
+  width: 87%;
+  height: 87%;
+  padding-top: 6.5%;
+  padding-left: 6.5%;
+  box-sizing: border-box;
+
+}
+
+#wheelCanvas {
+  width: 100%;
+  height: 100%;
+   display: block;
+  border-radius: 50%;
 }
 
 .spin-btn {
@@ -202,37 +302,75 @@ padding: 37px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   cursor: pointer;
 }
-#wheelCanvas {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-}
-#result {
-  transition: all 0.6s;
-  opacity: 0;
-}
-#result.show {
-  opacity: 1;
-}
-.result-content {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+
 .arrow-pointer {
   position: absolute;
-  top: 43%;        /* adjust vertically */
-  left: 90%;         /* center horizontally */
-  transform: translateX(-50%);
-  width: 50px;       /* adjust size */
+  top: 45%;
+  left: 93%;
+  transform: translateX(-50%) rotate(90deg);
+  width: 25px;
   height: auto;
-  z-index: 1;       /* make sure it’s above canvas */
-  transform: rotate(90deg);
+  z-index: 2;
+}
+
+/* ✅ Tablet Portrait (720px–1280px) */
+@media (min-width: 720px) and (max-width: 1280px) and (orientation: portrait) {
+  .wheel-container {
+    max-width: 400px;
+  }
+  .spin-btn {
+    width: 80px;
+    height: 80px;
+  }
+  .arrow-pointer {
+    width: 35px;
+    top: 44%;
+  }
+}
+
+/* ✅ Tablet Landscape (768px–1438px) */
+@media (min-width: 768px) and (max-width: 1438px) and (orientation: landscape) {
+  .wheel-container {
+    max-width: 450px;
+  }
+  .spin-btn {
+    width: 90px;
+    height: 90px;
+  }
+  .arrow-pointer {
+    width: 35px;
+     top: 44%;
+  }
+}
+
+/* ✅ Desktop Wide (≥1439px landscape) */
+@media (min-width: 1439px) and (orientation: landscape) {
+  .wheel-container {
+    max-width: 500px;
+  }
+  .spin-btn {
+    width: 100px;
+    height: 100px;
+  }
+  .arrow-pointer {
+    width: 35px;
+  }
+}
+
+/* ✅ Square-ish screens (aspect ratio 4:5 ~ 5:4) */
+@media (min-aspect-ratio: 4/5) and (max-aspect-ratio: 5/4) {
+  .wheel-container {
+    max-width: 326px;
+  }
+
+   .arrow-pointer {
+    width: 25px;
+  }
 }
 
 </style>
