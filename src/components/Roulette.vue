@@ -1,6 +1,20 @@
 <template>
   <div class="machine-stage">
     <div id="fireworks-layer"></div>
+
+      <div
+    v-if="loading"
+    class="loading-screen"
+    :class="{ exiting: loadingExiting }"
+    @click="onLoadingTap"
+    @touchstart="onLoadingTap"
+  >
+    <div class="loading-content">
+      <img src="/public/img/megabet_logo.webp" class="animate__animated animate__bounce animate__infinite" />
+      <div class="loading-text">TAP TO START...</div>
+    </div>
+  </div>
+
       <div class="machine-scale">
     <div class="machine">
     <div class="machine-header" >
@@ -186,6 +200,36 @@ function stopFireworks() {
     }, 1200); // ⏱ 1.2s delay (adjust as needed)
     }
 
+    function onLoadingTap() {
+
+        // 🎬 exit loading screen
+        loadingExiting.value = true
+
+        setTimeout(() => {
+            loading.value = false
+        }, 250)
+    }
+
+    const loading = ref(true)
+    const loadingExiting = ref(false)
+
+    function preloadFromGlob(globResult: Record<string, () => Promise<any>>) {
+    return Promise.all(
+        Object.values(globResult).map((importer) =>
+        importer().then((mod) => {
+            return new Promise<void>((resolve) => {
+            const img = new Image()
+            img.src = mod.default
+            img.onload = () => resolve()
+            img.onerror = () => resolve()
+            })
+        })
+        )
+    )
+    }
+
+
+
 
     return {
       currentIndex,
@@ -193,7 +237,10 @@ function stopFireworks() {
       showPrize,
       startSpin,
       rewards,
-      spinCount
+      spinCount,
+      loading,
+      loadingExiting,
+      onLoadingTap
     };
   },
 });
@@ -290,7 +337,7 @@ function stopFireworks() {
   position: fixed;
   inset: 0;
   pointer-events: none; /* IMPORTANT */
-  z-index: 1;
+  z-index: 2;
 }
 
 .machine-header {
@@ -726,6 +773,60 @@ border-color: transparent  transparent transparent #bb3e2a;
     font-family: 'Poppins';
   transform: translateY(2px);
   box-shadow: 0 4px 0 #d48806 !important;
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-image: radial-gradient(circle, orange, transparent 20%, orangered);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: orange;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+  cursor: pointer;
+}
+
+.loading-screen.exiting {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading-content img {
+    width: 50%;
+}
+
+.loading-spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 4px solid rgba(0, 0, 0, 0.25);
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: white;
+  font-size: 0.9rem;
 }
 
 </style>
