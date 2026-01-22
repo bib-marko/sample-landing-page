@@ -16,7 +16,7 @@
       <div class="gift-machine-box-3">
         <div class="gift-wrap">
           <div
-            v-for="(box, i) in 9"
+            v-for="(_, i) in 9"
             :key="i"
             class="gift-box"
             :class="{
