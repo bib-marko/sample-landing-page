@@ -77,30 +77,51 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
 import 'animate.css'
 import { Fireworks } from 'fireworks-js'
 import Swal from 'sweetalert2'
 
-export default defineComponent({
-  name: "RedPacket",
-  setup() {
+/* -------------------- STATE -------------------- */
+const spinCount = ref(1)
+const currentIndex = ref(-1)
+const finalIndex = ref(-1)
+const showPrize = ref(false)
+const spinning = ref(false)
 
-    const spinCount = ref(1);
-    const currentIndex = ref(-1);
-    const finalIndex = ref(-1);
-    const showPrize = ref(false);
-    const spinning = ref(false);
+const rewards = ref<number[]>(Array(9).fill(0))
 
-    const rewards = ref<number[]>(Array(9).fill(0));
+const loading = ref(true)
+const loadingExiting = ref(false)
 
-    let timer: number | null = null;
+/* -------------------- INTERNAL VARS -------------------- */
+let timer: number | null = null
+let fireworks: Fireworks | null = null
 
-    const giftOrder = [0, 1, 2, 5, 8, 7, 6, 3];
+const giftOrder = [0, 1, 2, 5, 8, 7, 6, 3]
 
-      let fireworks: Fireworks | null = null
+/* -------------------- UTIL -------------------- */
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
+function preloadFromGlob(
+  globResult: Record<string, () => Promise<any>>
+) {
+  return Promise.all(
+    Object.values(globResult).map(importer =>
+      importer().then(mod =>
+        new Promise<void>(resolve => {
+          const img = new Image()
+          img.src = mod.default
+          img.onload = () => resolve()
+          img.onerror = () => resolve()
+        })
+      )
+    )
+  )
+}
+
+/* -------------------- FIREWORKS -------------------- */
 function startFireworks() {
   if (fireworks) return
 
@@ -109,24 +130,18 @@ function startFireworks() {
 
   fireworks = new Fireworks(container, {
     autoresize: true,
-    opacity: 1,                 // brighter
+    opacity: 1,
     acceleration: 1.03,
     friction: 0.97,
-    gravity: 1.1,               // floaty
+    gravity: 1.1,
     particles: 140,
     traceLength: 4,
     traceSpeed: 10,
     explosion: 7,
     intensity: 32,
-    flickering: 75,             // sparkle
+    flickering: 75,
     lineStyle: 'round',
-
-    // 🌟 LIGHT COLORS
-    hue: {
-      min: 40,                  // gold
-      max: 65                   // light yellow
-    },
-
+    hue: { min: 40, max: 65 },
     delay: { min: 15, max: 30 },
     rocketsPoint: { min: 20, max: 80 }
   })
@@ -134,117 +149,103 @@ function startFireworks() {
   fireworks.start()
 }
 
-
 function stopFireworks() {
   fireworks?.stop()
   fireworks = null
 }
 
+/* -------------------- SPIN LOGIC -------------------- */
+function startSpin() {
+  if (spinning.value || spinCount.value <= 0) return
 
-    function startSpin() {
-      if (spinning.value) return;
+  spinning.value = true
+  showPrize.value = false
+  finalIndex.value = -1
+  spinCount.value = 0
 
-      spinning.value = true;
-      showPrize.value = false;
-      finalIndex.value = -1;
-        spinCount.value = 0;
+  let step = 0
+  const total = Math.floor(Math.random() * 8) + 24
 
-      let step = 0;
-      const total = Math.floor(Math.random() * 8) + 24;
+  timer = window.setInterval(() => {
+    currentIndex.value = giftOrder[step % 8]
+    step++
 
-      timer = window.setInterval(() => {
-        currentIndex.value = giftOrder[step % 8];
-        step++;
-        if (step >= total) stopSpin();
-      }, 120);
-    }
+    if (step >= total) stopSpin()
+  }, 120)
+}
 
-    function stopSpin() {
-    if (timer) clearInterval(timer);
+function stopSpin() {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
 
-    finalIndex.value = currentIndex.value;
-    spinning.value = false;
-    showPrize.value = true;
+  finalIndex.value = currentIndex.value
+  spinning.value = false
+  showPrize.value = true
 
-    rewards.value = rewards.value.map((_, i) => {
-        if (i === finalIndex.value) {
-        return 500; // 🎯 MAIN PRIZE ALWAYS ₱500
-        }
-        return Math.floor(Math.random() * (450 - 100 + 1)) + 100; // 🎲 ₱100–₱450
-    });
+  rewards.value = rewards.value.map((_, i) =>
+    i === finalIndex.value
+      ? 500
+      : Math.floor(Math.random() * (450 - 100 + 1)) + 100
+  )
 
-    // ⏳ DELAY BEFORE FIREWORKS + MODAL
-    setTimeout(() => {
-        startFireworks();
+  setTimeout(() => {
+    startFireworks()
 
-        Swal.fire({
-        title: "CONGRATULATIONS!",
-        width: 500,
-        confirmButtonText: "CLAIM NOW",
-        text: "Your Welcome Bonus Spin rewarded you with a 200 + 300 bonus. Have fun and enjoy!",
-        allowOutsideClick: false,
-        customClass: {
-            popup: 'redpacket-popup',
-            title: 'redpacket-title',
-            confirmButton: 'redpacket-confirm'
-        }
-        }).then((result) => {
-        // 🛑 STOP FIREWORKS
-        stopFireworks();
+    Swal.fire({
+      title: 'CONGRATULATIONS!',
+      width: 500,
+      confirmButtonText: 'CLAIM NOW',
+      text:
+        'Your Welcome Bonus Spin rewarded you with a 200 + 300 bonus. Have fun and enjoy!',
+      allowOutsideClick: false,
+      customClass: {
+        popup: 'redpacket-popup',
+        title: 'redpacket-title',
+        confirmButton: 'redpacket-confirm'
+      }
+    }).then(result => {
+      stopFireworks()
+      if (result.isConfirmed) {
+        window.location.href =
+          'https://megabet-paradise.com/welcome-bonus'
+      }
+    })
+  }, 1200)
+}
 
-        if (result.isConfirmed) {
-            window.location.href = "https://megabet-paradise.com/welcome-bonus";
-        }
-        });
+/* -------------------- LOADING -------------------- */
+function onLoadingTap() {
+  loadingExiting.value = true
+  setTimeout(() => {
+    loading.value = false
+  }, 250)
+}
 
-    }, 1200); // ⏱ 1.2s delay (adjust as needed)
-    }
+/* -------------------- LIFECYCLE -------------------- */
+onMounted(async () => {
+  const assetImages = import.meta.glob(
+    '/src/assets/**/*.{png,jpg,jpeg,webp,gif,svg}'
+  )
 
-    function onLoadingTap() {
+  const publicImages = import.meta.glob(
+    '/public/img/**/*.{png,jpg,jpeg,webp,gif,svg}'
+  )
 
-        // 🎬 exit loading screen
-        loadingExiting.value = true
+  await Promise.all([
+    preloadFromGlob(assetImages),
+    preloadFromGlob(publicImages),
+    wait(1000)
+  ])
+})
 
-        setTimeout(() => {
-            loading.value = false
-        }, 250)
-    }
-
-    const loading = ref(true)
-    const loadingExiting = ref(false)
-
-    function preloadFromGlob(globResult: Record<string, () => Promise<any>>) {
-    return Promise.all(
-        Object.values(globResult).map((importer) =>
-        importer().then((mod) => {
-            return new Promise<void>((resolve) => {
-            const img = new Image()
-            img.src = mod.default
-            img.onload = () => resolve()
-            img.onerror = () => resolve()
-            })
-        })
-        )
-    )
-    }
-
-
-
-
-    return {
-      currentIndex,
-      finalIndex,
-      showPrize,
-      startSpin,
-      rewards,
-      spinCount,
-      loading,
-      loadingExiting,
-      onLoadingTap
-    };
-  },
-});
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+  stopFireworks()
+})
 </script>
+
 
 <style scoped>
 
