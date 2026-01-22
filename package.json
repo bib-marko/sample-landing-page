@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@vueuse/core": "^13.9.0",
+    "animate.css": "^4.1.1",
     "canvas-confetti": "^1.9.3",
+    "fireworks-js": "^2.10.8",
+    "sweetalert2": "^11.26.17",
     "vue": "^3.5.18",
     "vue-fortune-wheel": "^2.1.0",
     "vue3-roulette": "^0.3.3",
