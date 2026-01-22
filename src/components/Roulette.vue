@@ -146,43 +146,46 @@ function stopFireworks() {
     }
 
     function stopSpin() {
-      if (timer) clearInterval(timer);
+    if (timer) clearInterval(timer);
 
-      finalIndex.value = currentIndex.value;
-      spinning.value = false;
-      showPrize.value = true;
+    finalIndex.value = currentIndex.value;
+    spinning.value = false;
+    showPrize.value = true;
 
-      rewards.value = rewards.value.map((_, i) => {
+    rewards.value = rewards.value.map((_, i) => {
         if (i === finalIndex.value) {
-          return 500; // 🎯 MAIN PRIZE ALWAYS ₱500
+        return 500; // 🎯 MAIN PRIZE ALWAYS ₱500
         }
         return Math.floor(Math.random() * (450 - 100 + 1)) + 100; // 🎲 ₱100–₱450
-      });
+    });
 
+    // ⏳ DELAY BEFORE FIREWORKS + MODAL
+    setTimeout(() => {
+        startFireworks();
 
-        startFireworks()
+        Swal.fire({
+        title: "CONGRATULATIONS!",
+        width: 500,
+        confirmButtonText: "CLAIM NOW",
+        text: "Your Welcome Bonus Spin rewarded you with a 200 + 300 bonus. Have fun and enjoy!",
+        allowOutsideClick: false,
+        customClass: {
+            popup: 'redpacket-popup',
+            title: 'redpacket-title',
+            confirmButton: 'redpacket-confirm'
+        }
+        }).then((result) => {
+        // 🛑 STOP FIREWORKS
+        stopFireworks();
 
-  Swal.fire({
-    title: "CONGRATULATIONS!",
-    width: 500,
-    confirmButtonText: "CLAIM NOW",
-    text: "Your Welcome Bonus Spin rewarded you with a 200 + 300 bonus. Have fun and enjoy!",
-    allowOutsideClick: false,
-    customClass: {
-    popup: 'redpacket-popup',
-    title: 'redpacket-title',
-    confirmButton: 'redpacket-confirm'
-  }
-  }).then((result) => {
-    // 🛑 STOP FIREWORKS
-    stopFireworks()
+        if (result.isConfirmed) {
+            window.location.href = "https://megabet-paradise.com/welcome-bonus";
+        }
+        });
 
-    if (result.isConfirmed) {
-      window.location.href = "https://megabet-paradise.com/welcome-bonus"
+    }, 1200); // ⏱ 1.2s delay (adjust as needed)
     }
-  })
 
-    }
 
     return {
       currentIndex,
