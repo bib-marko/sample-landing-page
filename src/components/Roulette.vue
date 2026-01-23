@@ -2,6 +2,7 @@
   <div class="machine-stage">
     <div id="fireworks-layer"></div>
 
+
       <div class="machine-scale">
     <div class="machine">
     <div class="machine-header" >
