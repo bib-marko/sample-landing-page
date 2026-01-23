@@ -2,19 +2,6 @@
   <div class="machine-stage">
     <div id="fireworks-layer"></div>
 
-      <div
-    v-if="loading"
-    class="loading-screen"
-    :class="{ exiting: loadingExiting }"
-    @click="onLoadingTap"
-    @touchstart="onLoadingTap"
-  >
-    <div class="loading-content">
-      <img src="/public/img/megabet_logo.webp" class="animate__animated animate__bounce animate__infinite" />
-      <div class="loading-text">TAP TO START...</div>
-    </div>
-  </div>
-
       <div class="machine-scale">
     <div class="machine">
     <div class="machine-header" >
@@ -91,9 +78,6 @@ const showPrize = ref(false)
 const spinning = ref(false)
 
 const rewards = ref<number[]>(Array(9).fill(0))
-
-const loading = ref(true)
-const loadingExiting = ref(false)
 
 /* -------------------- INTERNAL VARS -------------------- */
 let timer: number | null = null
@@ -215,13 +199,6 @@ function stopSpin() {
   }, 1200)
 }
 
-/* -------------------- LOADING -------------------- */
-function onLoadingTap() {
-  loadingExiting.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 250)
-}
 
 /* -------------------- LIFECYCLE -------------------- */
 onMounted(async () => {
